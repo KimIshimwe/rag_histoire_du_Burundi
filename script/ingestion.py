@@ -6,6 +6,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 def ingest_pdf(path):
+    # chargement du pdf
     loader = PyPDFLoader(path)
     pages = loader.load()
     

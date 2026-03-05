@@ -10,7 +10,9 @@ def create_vector_store(chunks, db_path = "db/chroma_db"):
     if not os.path.exists(db_path):
         os.makedirs(db_path)
         
-    embeddings = HuggingFaceEmbeddings(model_name = "sentence-transformers/all-MiniLM-L6-v2")
+    embeddings = HuggingFaceEmbeddings(model_name = "sentence-transformers/all-MiniLM-L6-v2",
+                                       model_kwargs={'device': 'cpu'}
+                                       )
     
     # création de la bd vectorielle
     vector_store = Chroma.from_documents(
@@ -22,7 +24,7 @@ def create_vector_store(chunks, db_path = "db/chroma_db"):
     return vector_store
 
 # test
-if __name__ == "__name__":
+if __name__ == "__main__":
     
     from ingestion import ingest_pdf
     path_to_pdf = "data/history_of_Burundi.pdf"
