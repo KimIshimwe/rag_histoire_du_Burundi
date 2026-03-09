@@ -11,8 +11,9 @@ def ingest_pdf(path):
     pages = loader.load()
     
     text_splitter = RecursiveCharacterTextSplitter(
-        chunk_size = 1000,
-        chunk_overlap = 200
+        chunk_size = 512,
+        chunk_overlap = 100, 
+        separators= ["\n\n", "\n", ". ", " ",""]
     )
     chunks = text_splitter.split_documents(pages)
     
