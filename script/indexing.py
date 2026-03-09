@@ -6,11 +6,11 @@ from langchain_community.vectorstores import Chroma
 load_dotenv()
 
 def create_vector_store(chunks, db_path = "db/chroma_db"):
-    # si le dossier n'existe pas 
+    # si le dossier n'existe pas Qwen/Qwen3-Embedding-4B
     if not os.path.exists(db_path):
         os.makedirs(db_path)
         
-    embeddings = HuggingFaceEmbeddings(model_name = "sentence-transformers/all-MiniLM-L6-v2",
+    embeddings = HuggingFaceEmbeddings(model_name = "Qwen/Qwen3-Embedding-4B",
                                        model_kwargs={'device': 'cpu'}
                                        )
     
