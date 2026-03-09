@@ -51,7 +51,7 @@ def start_rag():
         )
     
     # testce qu'on parle de NDADAYEn
-    query = "NDADAYE a été assasiné en quelle année ?"
+    query = "NDADAYE a été assasiné en quelle année à la suite de quel évènement?"
     print(f"\n--- Question: {query} ---")
     response = qa_chain.invoke(query)
     print("\n--- Réponse de l'IA ---")
