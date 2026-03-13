@@ -7,10 +7,10 @@ from langchain_classic.chains import RetrievalQA
 
 load_dotenv()
 
-def start_rag():
+def start_rag(query):
     
     embeddings = HuggingFaceEmbeddings(
-        model_name = "sentence-transformers/all-MiniLM-L6-v2",
+        model_name = "Qwen/Qwen3-Embedding-0.6B",
         model_kwargs = {'device': 'cpu'}
         
     )
@@ -32,8 +32,9 @@ def start_rag():
     
     # création du prompt
     template= """Utilise les extraits du document suivants pour répondre à la question à la fin.
-    Si la réponse ne se trouve pas dans les extraits, dis que tu ne sais pas.
-    Réponds en français.
+    Si la réponse ne se trouve pas dans le contexte, dis que tu ne sais pas.
+    
+    Réponds en français et réponds uniquement ç la question ne donne pas de détails.
     
     CONTEXTE: {context}
     QUESTION: {question}
@@ -46,17 +47,25 @@ def start_rag():
         llm = llm,
         chain_type = "stuff",
         retriever = db.as_retriever(search_kwargs = {"k":3}),
-        chain_type_kwargs = {"prompt": prompt}
-          
+        chain_type_kwargs = {"prompt": prompt},
+        return_source_documents = True 
         )
     
     # testce qu'on parle de NDADAYEn
-    query = "NDADAYE a été assasiné en quelle année à la suite de quel évènement?"
+
     print(f"\n--- Question: {query} ---")
     response = qa_chain.invoke(query)
     print("\n--- Réponse de l'IA ---")
     print(response["result"])
     
+    print("\n--- Sources: ---")
+    sources = response["source_documents"]
+    for i, doc in enumerate(sources):
+        page = doc.metadata.get("page", "N/A")
+        print(f"Source {i+1}: Page {page}")
+        
+    
+    
 if __name__ == "__main__":
-        start_rag()
+        start_rag("Quels sont les ethnies présents au Burundi ?")
     
