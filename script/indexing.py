@@ -2,6 +2,7 @@ import os
 from dotenv import load_dotenv
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_community.vectorstores import Chroma
+from sentence_transformers import SentenceTransformer
 
 load_dotenv()
 
@@ -10,11 +11,11 @@ def create_vector_store(chunks, db_path = "db/chroma_db"):
     if not os.path.exists(db_path):
         os.makedirs(db_path)
         
-    embeddings = HuggingFaceEmbeddings(model_name = "Qwen/Qwen3-Embedding-4B",
+    embeddings = HuggingFaceEmbeddings(model_name = "Qwen/Qwen3-Embedding-0.6B",
                                        model_kwargs={'device': 'cpu'}
                                        )
     
-    # création de la bd vectorielle
+    # création  et remplissage de la bd vectorielle
     vector_store = Chroma.from_documents(
         documents = chunks,
         embedding = embeddings,
