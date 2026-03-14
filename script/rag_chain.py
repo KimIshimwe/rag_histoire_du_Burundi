@@ -1,7 +1,7 @@
 import os
 from dotenv import load_dotenv
 from langchain_huggingface import ChatHuggingFace, HuggingFaceEmbeddings, HuggingFaceEndpoint
-from langchain_community.vectorstores import Chroma
+from langchain_chroma import Chroma
 from langchain_core.prompts import PromptTemplate
 from langchain_classic.chains import RetrievalQA
 
@@ -53,19 +53,19 @@ def start_rag(query):
     
     # testce qu'on parle de NDADAYEn
 
-    print(f"\n--- Question: {query} ---")
+    #print(f"\n--- Question: {query} ---")
     response = qa_chain.invoke(query)
-    print("\n--- Réponse de l'IA ---")
+    #print("\n--- Réponse de l'IA ---")
     print(response["result"])
     
-    print("\n--- Sources: ---")
+    #print("\n--- Sources: ---")
     sources = response["source_documents"]
     for i, doc in enumerate(sources):
         page = doc.metadata.get("page", "N/A")
-        print(f"Source {i+1}: Page {page}")
+       # print(f"Source {i+1}: Page {page}")
         
     
     
 if __name__ == "__main__":
-        start_rag("Quels sont les ethnies présents au Burundi ?")
+        start_rag("Quelle ethnie est majoritaire ?")
     
