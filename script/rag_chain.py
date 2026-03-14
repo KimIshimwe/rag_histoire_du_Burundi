@@ -4,6 +4,7 @@ from langchain_huggingface import ChatHuggingFace, HuggingFaceEmbeddings, Huggin
 from langchain_chroma import Chroma
 from langchain_core.prompts import PromptTemplate
 from langchain_classic.chains import RetrievalQA
+from langchain.memory import ConversationBufferMemory
 
 load_dotenv()
 # initialisation des embeddings
@@ -33,7 +34,7 @@ def init_llm():
     return ChatHuggingFace(llm=llm_endpoint)
 
 #génération de la réponse
-def get_answer(query,db,llm):
+def get_answer(query,db,llm,memory):
      # création du prompt
     template= """Utilise les extraits du document suivants pour répondre à la question à la fin.
     Si la réponse ne se trouve pas dans le contexte, dis que tu ne sais pas.
@@ -52,7 +53,11 @@ def get_answer(query,db,llm):
         llm = llm,
         chain_type = "stuff",
         retriever = db.as_retriever(search_kwargs = {"k":3}),
-        chain_type_kwargs = {"prompt": prompt},
+        chain_type_kwargs = {
+            "prompt": prompt,
+            "memory":memory
+        }
+        ,
         return_source_documents = False 
         )
     
