@@ -4,7 +4,6 @@ from langchain_huggingface import ChatHuggingFace, HuggingFaceEmbeddings, Huggin
 from langchain_chroma import Chroma
 from langchain_core.prompts import PromptTemplate
 from langchain_classic.chains import RetrievalQA
-from langchain.memory import ConversationBufferMemory
 
 load_dotenv()
 # initialisation des embeddings
@@ -17,7 +16,7 @@ def init_embeddings():
 
 #initialisation de bd vectorielle
 def init_db(embeddings):
-    return Chroma(persist_directory= "db/chroma_db", embedding_function=embeddings)
+    return Chroma(persist_directory= "db_burundi/chroma_db", embedding_function=embeddings)
 
 #initialisation du LLM
 def init_llm():
@@ -26,7 +25,7 @@ def init_llm():
     llm_endpoint = HuggingFaceEndpoint(
         repo_id = repo_id,
         huggingfacehub_api_token = os.getenv("HUGGINGFACEHUB_API_TOKEN"),
-        temperature  = 0.5,
+        temperature  = 0.6,
         max_new_tokens = 512,
         task = "text-generation",
     )
@@ -34,13 +33,13 @@ def init_llm():
     return ChatHuggingFace(llm=llm_endpoint)
 
 #génération de la réponse
-def get_answer(query,db,llm,memory):
+def get_answer(query,db,llm,chat_history):
      # création du prompt
     template= """Utilise les extraits du document suivants pour répondre à la question à la fin.
     Si la réponse ne se trouve pas dans le contexte, dis que tu ne sais pas.
     
-    Réponds en français et réponds uniquement à la question ne donne pas de détails.
-    Sois factuel et utilise un ton professionnel.
+    Réponds en français en utilisant toutes les informations nécessaires qui se trouvent dans le contexte pouvant répondre à la question.
+    
     
     CONTEXTE: {context}
     QUESTION: {question}
@@ -54,17 +53,15 @@ def get_answer(query,db,llm,memory):
         chain_type = "stuff",
         retriever = db.as_retriever(search_kwargs = {"k":3}),
         chain_type_kwargs = {
-            "prompt": prompt,
-            "memory":memory
-        }
+            "prompt": prompt
+            }
         ,
         return_source_documents = False 
         )
-    
-    # testce qu'on parle de NDADAYEn
+     # testce qu'on parle de NDADAYEn
 
     #print(f"\n--- Question: {query} ---")
-    response = qa_chain.invoke(query)
+    response = qa_chain.invoke({"query":query, "chat_history": chat_history})
     return {
         "result": response["result"]
     }
