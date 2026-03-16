@@ -1,4 +1,4 @@
-from langchain_community.document_loaders import PyPDFLoader
+from langchain_community.document_loaders import PyPDFLoader, DirectoryLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 import os
 from dotenv import load_dotenv
@@ -6,8 +6,12 @@ from dotenv import load_dotenv
 load_dotenv()
 
 def ingest_pdf(path):
-    # chargement du pdf
-    loader = PyPDFLoader(path)
+    # chargement de tous les pdf dans le bon dossier
+    loader = DirectoryLoader(
+        path,
+        glob="./*.pdf",
+        loader_cls=PyPDFLoader
+    )
     pages = loader.load()
     
     text_splitter = RecursiveCharacterTextSplitter(
